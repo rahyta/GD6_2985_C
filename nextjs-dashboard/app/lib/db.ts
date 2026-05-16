@@ -43,7 +43,16 @@ function getDatabaseUrl() {
 
 export function getSql() {
   if (!sqlClient) {
-    sqlClient = postgres(getDatabaseUrl(), { ssl: 'require' });
+    const url = getDatabaseUrl().replace(
+      'channel_binding=require',
+      'channel_binding=disable'
+    );
+    sqlClient = postgres(url, {
+      ssl: 'require',
+      max: 1,
+      idle_timeout: 20,
+      connect_timeout: 30,
+    });
   }
 
   return sqlClient;
